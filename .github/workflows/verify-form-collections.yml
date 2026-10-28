@@ -1,0 +1,20 @@
+name: Verify form collection regressions
+on:
+  push:
+    branches: [verify/form-null-collections-oct29]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [1.25.x, 1.26.x]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go test -race -count=10 ./encoding/form
+      - run: go test ./encoding/...
+      - run: go vet ./encoding/...
